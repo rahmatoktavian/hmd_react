@@ -12,58 +12,79 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 const BottomTab = createMaterialBottomTabNavigator();
 
 //template
-import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
-const theme = {
-  ...DefaultTheme,
-  roundness: 2,
-  colors: {
-    ...DefaultTheme.colors,
-    primary: 'orange',
-    accent: 'black',
-  },
-};
+import { Provider as PaperProvider } from 'react-native-paper';
+import Theme from './config/Theme';
 
 //screen
-import HomeScreen from './screen_nav/HomeScreen';
-import ProfileScreen from './screen_nav/ProfileScreen';
-import ProfileDetailScreen from './screen_nav/ProfileDetailScreen';
+import BukuListScreen from './screen_crud/BukuListScreen';
+import BukuInsertScreen from './screen_crud/BukuInsertScreen';
+import BukuUpdateScreen from './screen_crud/BukuUpdateScreen';
+
+import AnggotaListScreen from './screen_crud/AnggotaListScreen';
+import AnggotaInsertScreen from './screen_crud/AnggotaInsertScreen';
+import AnggotaUpdateScreen from './screen_crud/AnggotaUpdateScreen';
 
 export default function App() {
   return (
-  	<PaperProvider theme={theme}>
+  	<PaperProvider theme={Theme}>
 	    <NavigationContainer>
 	      	<BottomTab.Navigator
-	      		activeColor="black"
-	          	inactiveColor="grey"
-	          	barStyle={{backgroundColor:theme.colors.primary}} 
+	      		activeColor="white"
+	          	inactiveColor="silver"
+	          	barStyle={{backgroundColor:Theme.colors.primary}} 
 	          	shifting={false}
-	        >
-				<BottomTab.Screen 
-					name="HomeScreen" 
-					component={HomeScreen} 
+	        >	
+	        	<BottomTab.Screen 
+					name="AnggotaListScreen"
 					options={{
-						tabBarLabel: 'Home',
-						tabBarIcon: ({color}) => (<MaterialCommunityIcons name="home-outline" color={color} size={25} />)
-					}}
-				/>
-				<BottomTab.Screen 
-					name="ProfileScreen"
-					options={{
-						tabBarLabel: 'Profile',
-						tabBarIcon: ({color}) => (<MaterialCommunityIcons name="account-outline" color={color} size={25} />)
+						tabBarLabel: 'Anggota',
+						tabBarIcon: ({color}) => (<MaterialCommunityIcons name="account" color={color} size={25} />)
 					}}
 				>
 				{() => (
               		<Stack.Navigator>
 		                <Stack.Screen 
-		                  name="ProfileScreen"
-		                  component={ProfileScreen}
-		                  options={{ headerShown: false }} 
+		                  name="AnggotaListScreen"
+		                  component={AnggotaListScreen}
+		                  options={{headerShown:false}}
 		                />
 		                <Stack.Screen 
-		                  name="ProfileDetailScreen"
-		                  component={ProfileDetailScreen}
-		                  options={{ headerShown: false }} 
+		                  name="AnggotaInsertScreen"
+		                  component={AnggotaInsertScreen}
+		                  options={{headerShown:false}} 
+		                />
+		                <Stack.Screen 
+		                  name="AnggotaUpdateScreen"
+		                  component={AnggotaUpdateScreen}
+		                  options={{headerShown:false}}
+		                />
+					</Stack.Navigator>
+				)}
+                </BottomTab.Screen>
+
+				<BottomTab.Screen 
+					name="BukuListScreen"
+					options={{
+						tabBarLabel: 'Buku',
+						tabBarIcon: ({color}) => (<MaterialCommunityIcons name="book" color={color} size={25} />)
+					}}
+				>
+				{() => (
+              		<Stack.Navigator>
+		                <Stack.Screen 
+		                  name="BukuListScreen"
+		                  component={BukuListScreen}
+		                  options={{headerShown:false}}
+		                />
+		                <Stack.Screen 
+		                  name="BukuInsertScreen"
+		                  component={BukuInsertScreen}
+		                  options={{headerShown:false}} 
+		                />
+		                <Stack.Screen 
+		                  name="BukuUpdateScreen"
+		                  component={BukuUpdateScreen}
+		                  options={{headerShown:false}}
 		                />
 					</Stack.Navigator>
 				)}
