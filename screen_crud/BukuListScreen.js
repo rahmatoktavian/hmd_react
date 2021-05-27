@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
-import { Appbar, Button, List } from 'react-native-paper';
+import { View, ScrollView } from 'react-native';
+import { Provider as PaperProvider, Appbar, ProgressBar, Portal, Modal, ActivityIndicator, Button, List } from 'react-native-paper';
+
+import BaseUrl from '../config/BaseUrl';
+import Theme from '../config/Theme';
 
 class BukuListScreen extends Component {
 
@@ -8,39 +11,86 @@ class BukuListScreen extends Component {
       super(props);
 
       this.state = {
+        data: [],
+        isLoading: false,
       };
   }
 
   componentDidMount() {
-      
+      this.getData();
+
+      this._unsubscribe = this.props.navigation.addListener('focus', () => {
+        this.getData();
+      });
+  }
+
+  componentWillUnmount() {
+    this._unsubscribe();
+  }
+
+  getData() {
+      this.setState({isLoading:true});
+
+      //api url & parameter
+      let apiurl = BaseUrl()+'/buku';
+      const options = {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json'},
+      };
+
+      //memanggil server api
+      fetch(apiurl, options)
+      .then(response => {return response.json()})
+
+      //response dari api
+      .then(responseData => { 
+          //menangkap response api
+          let data = responseData.data;
+
+          //memasukan respon ke state untuk loop data di render
+          this.setState({data:data, isLoading:false});
+      })
   }
 
   render() {
       return (
-        <View>
+        <PaperProvider theme={Theme}>
           <Appbar.Header>
             <Appbar.Content title="List Buku" />
           </Appbar.Header>
 
+          <ScrollView>
           <List.Section>
-              <List.Item
-                title="First Book"
-                description="Item description"
-                right={props => <List.Icon {...props} icon="pencil" />}
-                onPress={() => this.props.navigation.navigate('BukuUpdateScreen', {id:'First User'})}
-              />
+              {/*loop data state*/}
+              {this.state.data.map((row,key) => (
+                <List.Item
+                  key={key}
+                  title={row.judul}
+                  description={'Kategori: '+row.nama_kategori}
+                  right={props => <List.Icon {...props} icon="pencil" />}
+                  onPress={() => this.props.navigation.navigate('BukuUpdateScreen', {nim: row.nim})}
+                />
+              ))}
+              {/*end loop*/}
           </List.Section>
+          </ScrollView>
           
           <Button 
               mode="contained" 
               icon="plus" 
-              onPress={() => this.props.navigation.navigate('BukuInsertScreen')}
+              onPress={() => this.props.navigation.navigate('BukuInsertScreen', {refresh:this.onRefresh})}
               style={{margin:20}}
           >
             Insert Buku
           </Button>
 
-        </View>
+          <Portal>
+            <Modal visible={this.state.isLoading}>
+              <ActivityIndicator animating={true} size="large" color={Theme.colors.primary} />
+            </Modal>
+          </Portal>
+
+        </PaperProvider>
       )
   }
 }
