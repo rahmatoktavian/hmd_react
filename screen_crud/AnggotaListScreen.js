@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, ScrollView } from 'react-native';
-import { Provider as PaperProvider, Appbar, ProgressBar, Portal, Modal, ActivityIndicator, Button, List } from 'react-native-paper';
+import { Provider as PaperProvider, Appbar, Portal, Modal, ActivityIndicator, Button, List } from 'react-native-paper';
 
 import BaseUrl from '../config/BaseUrl';
 import Theme from '../config/Theme';

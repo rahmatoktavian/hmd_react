@@ -64,7 +64,7 @@ class AnggotaUpdateScreen extends Component {
           method: 'PUT',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({
-            nim: this.state.nim,
+            nim: this.props.route.params.nim,
             nama: this.state.nama,
             jurusan: this.state.jurusan,
           })
@@ -104,7 +104,7 @@ class AnggotaUpdateScreen extends Component {
       this.setState({isLoading:true});
 
       //api url
-      let apiurl = BaseUrl()+'/anggota/delete/?nim='+this.state.nim;
+      let apiurl = BaseUrl()+'/anggota/delete/?nim='+this.props.route.params.nim;
       
       //menyiapkan data untuk dikirim ke server api
       const options = {

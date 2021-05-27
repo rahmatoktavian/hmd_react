@@ -103,7 +103,7 @@ class BukuInsertScreen extends Component {
             <Picker.Item label="Pilih Kategori" value="" />
             {/*loop data state*/}
             {this.state.kategori_buku_data.map((row,key) => (
-              <Picker.Item label={row.nama} value={row.id} />
+              <Picker.Item key={key} label={row.nama} value={row.id} />
             ))}
             {/*end loop*/}
           </Picker>

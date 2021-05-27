@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, ScrollView } from 'react-native';
-import { Provider as PaperProvider, Appbar, ProgressBar, Portal, Modal, ActivityIndicator, Button, List } from 'react-native-paper';
+import { Provider as PaperProvider, Appbar, Portal, Modal, ActivityIndicator, Button, List } from 'react-native-paper';
 
 import BaseUrl from '../config/BaseUrl';
 import Theme from '../config/Theme';
@@ -68,7 +68,7 @@ class BukuListScreen extends Component {
                   title={row.judul}
                   description={'Kategori: '+row.nama_kategori}
                   right={props => <List.Icon {...props} icon="pencil" />}
-                  onPress={() => this.props.navigation.navigate('BukuUpdateScreen', {nim: row.nim})}
+                  onPress={() => this.props.navigation.navigate('BukuUpdateScreen', {id: row.id})}
                 />
               ))}
               {/*end loop*/}
