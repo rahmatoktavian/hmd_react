@@ -3,6 +3,7 @@ import { View, Alert } from 'react-native';
 import { Provider as PaperProvider, Appbar, Button, TextInput, HelperText, Portal, Modal, ActivityIndicator, } from 'react-native-paper';
 import { Picker } from '@react-native-picker/picker';
 
+import supabase from '../config/supabase';
 import BaseUrl from '../config/BaseUrl';
 import Theme from '../config/Theme';
 
@@ -14,6 +15,7 @@ class BukuInsertScreen extends Component {
       this.state = {
         kategori_buku_data: [],
 
+        id: this.props.route.params.id,
         kategori_id: '',
         judul: '',
         stok: '',
@@ -26,96 +28,67 @@ class BukuInsertScreen extends Component {
       this.getData();
   }
 
-  getKategoriData() {
+  async getKategoriData() {
       this.setState({isLoading:true});
 
-      //api url & parameter
-      let apiurl = BaseUrl()+'/kategori_buku';
-      const options = {
-          method: 'GET',
-          headers: {'Content-Type': 'application/json'},
-      };
+      ///memanggil api supabase
+      let { data, error } = await supabase
+        .from('kategori_buku')
+        .select('id, nama')
+        .order('nama', {ascending:true});
 
-      //memanggil server api
-      fetch(apiurl, options)
-      .then(response => {return response.json()})
-
-      //response dari api
-      .then(responseData => { 
-          //menangkap response api
-          let data = responseData.data;
-          
-          //memasukan respon ke state untuk loop data di render
-          this.setState({kategori_buku_data:data, isLoading:false});
-      })
+      //memasukan respon ke state untuk data di render
+      this.setState({kategori_buku_data:data, isLoading:false});
   }
 
-  getData() {
+  async getData() {
       this.setState({isLoading:true});
 
-      //api url & parameter
-      let id = this.props.route.params.id;
-      let apiurl = BaseUrl()+'/buku/detail/?id='+id;
-      const options = {
-          method: 'GET',
-          headers: {'Content-Type': 'application/json'},
-      };
+      //memanggil api supabase (get data anggota by nim)
+      let { data, error } = await supabase
+        .from('buku')
+        .select('kategori_id, judul, stok')
+        .eq('id', this.state.id)
+        .single()
 
-      //memanggil server api
-      fetch(apiurl, options)
-      .then(response => {return response.json()})
-
-      //response dari api
-      .then(responseData => { 
-          //menangkap response api
-          let data = responseData.data;
-        
-          //memasukan respon ke state untuk loop data di render
-          this.setState({
-              kategori_id: data.kategori_id,
-              judul: data.judul,
-              stok: data.stok, 
-              isLoading:false
-            });
-      })
+      //memasukan respon ke state untuk data di render
+      this.setState({
+        kategori_id: data.kategori_id,
+        judul: data.judul,
+        stok: data.stok, 
+        isLoading:false
+      });
   }
 
   //memanggil api untuk menyimpan data
-  onUpdate() {
+  async onUpdate() {
       this.setState({isLoading:true});
 
-      //api url
-      let apiurl = BaseUrl()+'/buku';
+      //memanggil api supabase
+      let { data, error } = await supabase
+        .from('buku')
+        .update({
+                  kategori_id: this.state.kategori_id,
+                  judul: this.state.judul,
+                  stok: this.state.stok,
+                })
+        .eq('id', this.state.id);
 
-      //menyiapkan data untuk dikirim ke server api
-      const options = {
-          method: 'PUT',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({
-            id: this.props.route.params.id,
-            kategori_id: this.state.kategori_id,
-            judul: this.state.judul,
-            stok: this.state.stok,
-          })
-      };
+      //menampilkan response
+      let message = 'Data berhasil diubah';
+      if(error) {
+        message = error.message;
+      }
 
-      //memanggil server api
-      fetch(apiurl, options)
-      .then(response => {return response.json()})
+      Alert.alert(
+        "Pemberitahuan",
+        message,
+        [
+          { text: "OK", onPress: () => this.props.navigation.navigate('BukuListScreen') }
+        ]
+      );
 
-      //response dari api
-      .then(responseData => {
-          this.setState({isLoading:false});
-
-          //menampilkan response message
-          Alert.alert(
-            "Pemberitahuan",
-            responseData.message,
-            [
-              { text: "OK", onPress: () => this.props.navigation.navigate('BukuListScreen') }
-            ]
-          );
-      })
+      this.setState({isLoading:false});
   }
 
   onDeleteConfirm() {
@@ -129,35 +102,30 @@ class BukuInsertScreen extends Component {
     );
   }
 
-  onDelete() {
+  async onDelete() {
       this.setState({isLoading:true});
 
-      //api url
-      let apiurl = BaseUrl()+'/buku/delete/?id='+this.props.route.params.id;
-      
-      //menyiapkan data untuk dikirim ke server api
-      const options = {
-          method: 'GET',
-          headers: {'Content-Type': 'application/json'},
-      };
+      //memanggil api supabase
+      let { data, error } = await supabase
+        .from('buku')
+        .delete()
+        .eq('id', this.state.id);
 
-      //memanggil server api
-      fetch(apiurl, options)
-      .then(response => {return response.json()})
+      //menampilkan response message
+      let message = 'Data berhasil diubah';
+      if(error) {
+        message = error.message;
+      }
 
-      //response dari api
-      .then(responseData => {
-          this.setState({isLoading:false});
+      Alert.alert(
+        "Pemberitahuan",
+        message,
+        [
+          { text: "OK", onPress: () => this.props.navigation.navigate('BukuListScreen') }
+        ]
+      );
 
-          //menampilkan response message
-          Alert.alert(
-            "Pemberitahuan",
-            responseData.message,
-            [
-              { text: "OK", onPress: () => this.props.navigation.navigate('BukuListScreen') }
-            ]
-          );
-      })
+      this.setState({isLoading:false});
   }
 
   render() {
@@ -193,7 +161,7 @@ class BukuInsertScreen extends Component {
 
           <TextInput
             label="Stok"
-            value={this.state.stok}
+            value={this.state.stok.toString()}
             onChangeText={text => this.setState({stok:text})}
             keyboardType="numeric"
             style={{margin:10}}

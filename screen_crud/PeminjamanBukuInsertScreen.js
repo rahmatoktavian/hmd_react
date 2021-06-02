@@ -6,36 +6,36 @@ import { Picker } from '@react-native-picker/picker';
 import supabase from '../config/supabase';
 import Theme from '../config/Theme';
 
-class BukuInsertScreen extends Component {
+class PeminjamanBukuInsertScreen extends Component {
 
   constructor(props) {
       super(props);
 
       this.state = {
-        kategori_buku_data: [],
+        buku_data: [],
 
-        kategori_id: '',
-        judul: '',
-        stok: '',
+        peminjaman_id: this.props.route.params.peminjaman_id,
+        buku_id: '',
         isLoading: false,
       };
   }
 
   componentDidMount() {
-      this.getKategoriData();
+      this.getBukuData();
   }
 
-  async getKategoriData() {
+  async getBukuData() {
       this.setState({isLoading:true});
 
       ///memanggil api supabase
       let { data, error } = await supabase
-        .from('kategori_buku')
-        .select('id, nama')
-        .order('nama', {ascending:true});
+        .from('buku')
+        .select('id, judul')
+        .gt('stok', 0)
+        .order('judul', {ascending:true});
 
       //memasukan respon ke state untuk data di render
-      this.setState({kategori_buku_data:data, isLoading:false});
+      this.setState({buku_data:data, isLoading:false});
   }
 
   //memanggil api untuk menyimpan data
@@ -44,24 +44,25 @@ class BukuInsertScreen extends Component {
 
       //memanggil api supabase
       let { data, error } = await supabase
-        .from('buku')
+        .from('peminjaman_buku')
         .insert({
-                  kategori_id: this.state.kategori_id,
-                  judul: this.state.judul,
-                  stok: this.state.stok,
+                  peminjaman_id: this.state.peminjaman_id,
+                  buku_id: this.state.buku_id,
+                  buku_rusak: false,
+                  buku_hilang: false,
                 });
 
       //menampilkan response
       let message = 'Data berhasil ditambah';
       if(error) {
         message = error.message;
-      } 
+      }
 
       Alert.alert(
         "Pemberitahuan",
         message,
         [
-          { text: "OK", onPress: () => this.props.navigation.navigate('BukuListScreen') }
+          { text: "OK", onPress: () => this.props.navigation.navigate('PeminjamanBukuListScreen', {peminjaman_id: this.state.peminjaman_id}) }
         ]
       );
 
@@ -73,36 +74,21 @@ class BukuInsertScreen extends Component {
         <PaperProvider theme={Theme}>
           <Appbar.Header>
             <Appbar.Action icon="arrow-left" onPress={() => this.props.navigation.goBack()} />
-            <Appbar.Content title="Insert Buku" />
+            <Appbar.Content title="Insert Peminjaman Buku" />
           </Appbar.Header>
 
           <Picker
-            selectedValue={this.state.kategori_id}
-            onValueChange={(itemValue, itemIndex) => this.setState({kategori_id:itemValue})}
+            selectedValue={this.state.buku_id}
+            onValueChange={(itemValue, itemIndex) => this.setState({buku_id:itemValue})}
             style={{margin:10}}
           >
-            <Picker.Item label="Pilih Kategori" value="" />
+            <Picker.Item label="Pilih Buku" value="" />
             {/*loop data state*/}
-            {this.state.kategori_buku_data.map((row,key) => (
-              <Picker.Item key={key} label={row.nama} value={row.id} />
+            {this.state.buku_data.map((row,key) => (
+              <Picker.Item key={key} label={row.judul} value={row.id} />
             ))}
             {/*end loop*/}
           </Picker>
-
-          <TextInput
-            label="Judul"
-            value={this.state.judul}
-            onChangeText={text => this.setState({judul:text})}
-            style={{margin:10}}
-          />
-
-          <TextInput
-            label="Stok"
-            value={this.state.stok}
-            onChangeText={text => this.setState({stok:text})}
-            keyboardType="numeric"
-            style={{margin:10}}
-          />
 
           <Button 
               mode="contained" 
@@ -115,7 +101,7 @@ class BukuInsertScreen extends Component {
 
           <Portal>
             <Modal visible={this.state.isLoading}>
-              <ActivityIndicator akategori_idating={true} size="large" color={Theme.colors.primary} />
+              <ActivityIndicator abuku_idating={true} size="large" color={Theme.colors.primary} />
             </Modal>
           </Portal>
         </PaperProvider>
@@ -123,4 +109,4 @@ class BukuInsertScreen extends Component {
   }
 }
 
-export default BukuInsertScreen;
+export default PeminjamanBukuInsertScreen;

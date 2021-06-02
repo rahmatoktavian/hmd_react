@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Alert } from 'react-native';
 import { Provider as PaperProvider, Appbar, Button, TextInput, Portal, Modal, ActivityIndicator, } from 'react-native-paper';
 
-import supabase from '../config/supabase';
+import BaseUrl from '../config/BaseUrl';
 import Theme from '../config/Theme';
 
 class AnggotaInsertScreen extends Component {
@@ -19,33 +19,40 @@ class AnggotaInsertScreen extends Component {
   }
 
   //memanggil api untuk menyimpan data
-  async onInsert() {
+  onInsert() {
       this.setState({isLoading:true});
 
-      //memanggil api supabase
-      let { data, error } = await supabase
-        .from('anggota')
-        .insert({
-                  nim: this.state.nim,
-                  nama: this.state.nama,
-                  jurusan: this.state.jurusan,
-                });
+      //api url
+      let apiurl = BaseUrl()+'/anggota';
 
-      //menampilkan response
-      let message = 'Data berhasil ditambah';
-      if(error) {
-        message = error.message;
-      } 
+      //menyiapkan data untuk dikirim ke server api
+      const options = {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            nim: this.state.nim,
+            nama: this.state.nama,
+            jurusan: this.state.jurusan,
+          })
+      };
 
-      Alert.alert(
-        "Pemberitahuan",
-        message,
-        [
-          { text: "OK", onPress: () => this.props.navigation.navigate('AnggotaListScreen') }
-        ]
-      );
+      //memanggil server api
+      fetch(apiurl, options)
+      .then(response => {return response.json()})
 
-      this.setState({isLoading:false});
+      //response dari api
+      .then(responseData => {
+          this.setState({isLoading:false});
+
+          //menampilkan response message
+          Alert.alert(
+            "Pemberitahuan",
+            responseData.message,
+            [
+              { text: "OK", onPress: () => this.props.navigation.navigate('AnggotaListScreen') }
+            ]
+          );
+      })
   }
 
   render() {

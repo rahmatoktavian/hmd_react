@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { View, ScrollView } from 'react-native';
-import { Provider as PaperProvider, Appbar, List, Portal, Modal, ActivityIndicator, Button, } from 'react-native-paper';
+import { Provider as PaperProvider, Appbar, List, Portal, Modal, ActivityIndicator, Button, IconButton } from 'react-native-paper';
 
 import supabase from '../config/supabase';
 import Theme from '../config/Theme';
 
-class AnggotaListScreen extends Component {
+class PeminjamanListScreen extends Component {
 
   constructor(props) {
       super(props);
@@ -13,6 +13,7 @@ class AnggotaListScreen extends Component {
       this.state = {
         data: [],
         isLoading: false,
+        menuVisible: false,
       };
   }
 
@@ -33,9 +34,9 @@ class AnggotaListScreen extends Component {
 
       //memanggil api supabase
       let { data, error } = await supabase
-        .from('anggota')
-        .select('nim, nama, jurusan')
-        .order('nim', {ascending:false})
+        .from('peminjaman')
+        .select('id, tanggal_pinjam, anggota(nama)')
+        .order('id', {ascending:false});
 
       //memasukan respon ke state untuk loop data di render
       this.setState({data:data, isLoading:false});
@@ -45,19 +46,22 @@ class AnggotaListScreen extends Component {
       return (
         <PaperProvider theme={Theme}>
           <Appbar.Header>
-            <Appbar.Content title="Anggota" />
+            <Appbar.Content title="Peminjaman" />
           </Appbar.Header>
 
           <ScrollView>
           <List.Section>
               {/*loop data state*/}
+
               {this.state.data.map((row,key) => (
                 <List.Item
                   key={key}
-                  title={row.nama}
-                  description={'NIM : '+row.nim}
-                  right={props => <List.Icon icon="pencil" />}
-                  onPress={() => this.props.navigation.navigate('AnggotaUpdateScreen', {nim: row.nim})}
+                  title={row.anggota.nama}
+                  description={'Tgl Pinjam: '+row.tanggal_pinjam}
+                  right={props => <View style={{flexDirection:'row'}}>
+                                    <IconButton icon="book" onPress={() => this.props.navigation.navigate('PeminjamanBukuListScreen', {peminjaman_id: row.id, nama: row.anggota.nama, tanggal_pinjam: row.tanggal_pinjam})} />
+                                    <IconButton icon="pencil" onPress={() => this.props.navigation.navigate('PeminjamanUpdateScreen', {id: row.id})} />
+                                  </View>}
                 />
               ))}
               {/*end loop*/}
@@ -67,10 +71,10 @@ class AnggotaListScreen extends Component {
           <Button 
               mode="contained" 
               icon="plus" 
-              onPress={() => this.props.navigation.navigate('AnggotaInsertScreen')}
+              onPress={() => this.props.navigation.navigate('PeminjamanInsertScreen')}
               style={{margin:20}}
           >
-            Insert Anggota
+            Insert Peminjaman
           </Button>
 
           <Portal>
@@ -84,4 +88,4 @@ class AnggotaListScreen extends Component {
   }
 }
 
-export default AnggotaListScreen;
+export default PeminjamanListScreen;
