@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import { View, ScrollView } from 'react-native';
 import { Provider as PaperProvider, Appbar, List, Portal, Modal, ActivityIndicator, Button, } from 'react-native-paper';
 
-import BaseUrl from '../config/BaseUrl';
+import supabase from '../config/supabase';
 import Theme from '../config/Theme';
 
-class BukuListScreen extends Component {
+class AnggotaListScreen extends Component {
 
   constructor(props) {
       super(props);
@@ -28,48 +28,36 @@ class BukuListScreen extends Component {
     this._unsubscribe();
   }
 
-  getData() {
+  async getData() {
       this.setState({isLoading:true});
 
-      //api url & parameter
-      let apiurl = BaseUrl()+'/buku';
-      const options = {
-          method: 'GET',
-          headers: {'Content-Type': 'application/json'},
-      };
+      //memanggil api supabase
+      let { data, error } = await supabase
+        .from('anggota')
+        .select('nim, nama, jurusan')
+        .order('nim', {ascending:false})
 
-      //memanggil server api
-      fetch(apiurl, options)
-      .then(response => {return response.json()})
-
-      //response dari api
-      .then(responseData => { 
-          //menangkap response api
-          let data = responseData.data;
-
-          //memasukan respon ke state untuk loop data di render
-          this.setState({data:data, isLoading:false});
-      })
+      //memasukan respon ke state untuk loop data di render
+      this.setState({data:data, isLoading:false});
   }
 
   render() {
       return (
         <PaperProvider theme={Theme}>
           <Appbar.Header>
-            <Appbar.Content title="Buku" />
+            <Appbar.Content title="Anggota" />
           </Appbar.Header>
 
           <ScrollView>
           <List.Section>
               {/*loop data state*/}
-
               {this.state.data.map((row,key) => (
                 <List.Item
                   key={key}
-                  title={row.judul}
-                  description={'Kategori: '+row.nama_kategori}
+                  title={row.nama}
+                  description={'NIM : '+row.nim}
                   right={props => <List.Icon icon="pencil" />}
-                  onPress={() => this.props.navigation.navigate('BukuUpdateScreen', {id: row.id})}
+                  onPress={() => this.props.navigation.navigate('AnggotaUpdateScreen', {nim: row.nim})}
                 />
               ))}
               {/*end loop*/}
@@ -79,10 +67,10 @@ class BukuListScreen extends Component {
           <Button 
               mode="contained" 
               icon="plus" 
-              onPress={() => this.props.navigation.navigate('BukuInsertScreen')}
+              onPress={() => this.props.navigation.navigate('AnggotaInsertScreen')}
               style={{margin:20}}
           >
-            Insert Buku
+            Insert Anggota
           </Button>
 
           <Portal>
@@ -96,4 +84,4 @@ class BukuListScreen extends Component {
   }
 }
 
-export default BukuListScreen;
+export default AnggotaListScreen;

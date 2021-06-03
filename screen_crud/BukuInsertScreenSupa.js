@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { View, Alert } from 'react-native';
-import { Provider as PaperProvider, Appbar, Button, TextInput, Portal, Modal, ActivityIndicator, HelperText } from 'react-native-paper';
+import { Provider as PaperProvider, Appbar, Button, TextInput, Portal, Modal, ActivityIndicator, } from 'react-native-paper';
 import { Picker } from '@react-native-picker/picker';
 
-import BaseUrl from '../config/BaseUrl';
+import supabase from '../config/supabase';
 import Theme from '../config/Theme';
 
 class BukuInsertScreen extends Component {
@@ -25,65 +25,47 @@ class BukuInsertScreen extends Component {
       this.getKategoriData();
   }
 
-  getKategoriData() {
+  async getKategoriData() {
       this.setState({isLoading:true});
 
-      //api url & parameter
-      let apiurl = BaseUrl()+'/kategori_buku';
-      const options = {
-          method: 'GET',
-          headers: {'Content-Type': 'application/json'},
-      };
+      ///memanggil api supabase
+      let { data, error } = await supabase
+        .from('kategori_buku')
+        .select('id, nama')
+        .order('nama', {ascending:true});
 
-      //memanggil server api
-      fetch(apiurl, options)
-      .then(response => {return response.json()})
-
-      //response dari api
-      .then(responseData => { 
-          //menangkap response api
-          let data = responseData.data;
-
-          //memasukan respon ke state untuk loop data di render
-          this.setState({kategori_buku_data:data, isLoading:false});
-      })
+      //memasukan respon ke state untuk data di render
+      this.setState({kategori_buku_data:data, isLoading:false});
   }
 
   //memanggil api untuk menyimpan data
-  onInsert() {
+  async onInsert() {
       this.setState({isLoading:true});
 
-      //api url
-      let apiurl = BaseUrl()+'/buku';
+      //memanggil api supabase
+      let { data, error } = await supabase
+        .from('buku')
+        .insert({
+                  kategori_id: this.state.kategori_id,
+                  judul: this.state.judul,
+                  stok: this.state.stok,
+                });
 
-      //menyiapkan data untuk dikirim ke server api
-      const options = {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({
-            kategori_id: this.state.kategori_id,
-            judul: this.state.judul,
-            stok: this.state.stok,
-          })
-      };
+      //menampilkan response
+      let message = 'Data berhasil ditambah';
+      if(error) {
+        message = error.message;
+      } 
 
-      //memanggil server api
-      fetch(apiurl, options)
-      .then(response => {return response.json()})
+      Alert.alert(
+        "Pemberitahuan",
+        message,
+        [
+          { text: "OK", onPress: () => this.props.navigation.navigate('BukuListScreen') }
+        ]
+      );
 
-      //response dari api
-      .then(responseData => {
-          this.setState({isLoading:false});
-
-          //menampilkan response message
-          Alert.alert(
-            "Pemberitahuan",
-            responseData.message,
-            [
-              { text: "OK", onPress: () => this.props.navigation.navigate('BukuListScreen') }
-            ]
-          );
-      });
+      this.setState({isLoading:false});
   }
 
   render() {
@@ -94,7 +76,6 @@ class BukuInsertScreen extends Component {
             <Appbar.Content title="Insert Buku" />
           </Appbar.Header>
 
-          <HelperText style={{marginHorizontal:10, marginTop:10}}>Kategori</HelperText>
           <Picker
             selectedValue={this.state.kategori_id}
             onValueChange={(itemValue, itemIndex) => this.setState({kategori_id:itemValue})}
