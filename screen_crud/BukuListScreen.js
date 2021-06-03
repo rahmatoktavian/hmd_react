@@ -43,7 +43,7 @@ class BukuListScreen extends Component {
       .then(response => {return response.json()})
 
       //response dari api
-      .then(responseData => { 
+      .then(responseData => {
           //menangkap response api
           let data = responseData.data;
 

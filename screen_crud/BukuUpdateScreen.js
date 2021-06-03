@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Alert } from 'react-native';
+import { View, Alert, ScrollView } from 'react-native';
 import { Provider as PaperProvider, Appbar, Button, TextInput, HelperText, Portal, Modal, ActivityIndicator, } from 'react-native-paper';
 import { Picker } from '@react-native-picker/picker';
 
@@ -170,44 +170,46 @@ class BukuInsertScreen extends Component {
             <Appbar.Action icon="delete" onPress={() => this.onDeleteConfirm()} />
           </Appbar.Header>
 
-          <HelperText style={{marginHorizontal:10, marginTop:10}}>Kategori</HelperText>
-          <Picker
-            selectedValue={this.state.kategori_id}
-            onValueChange={(itemValue, itemIndex) => this.setState({kategori_id:itemValue})}
-            style={{marginHorizontal:10}}
-          >
-            <Picker.Item label="Pilih Kategori" value="" />
-            {/*loop data state*/}
-            {this.state.kategori_buku_data.map((row,key) => (
-              <Picker.Item key={key} label={row.nama} value={row.id} />
-            ))}
-            {/*end loop*/}
-          </Picker>
+          <ScrollView>
+            <HelperText style={{marginHorizontal:10, marginTop:10}}>Kategori</HelperText>
+            <Picker
+              selectedValue={this.state.kategori_id}
+              onValueChange={(itemValue, itemIndex) => this.setState({kategori_id:itemValue})}
+              style={{marginHorizontal:10}}
+            >
+              <Picker.Item label="Pilih Kategori" value="" />
+              {/*loop data state*/}
+              {this.state.kategori_buku_data.map((row,key) => (
+                <Picker.Item key={key} label={row.nama} value={row.id} />
+              ))}
+              {/*end loop*/}
+            </Picker>
 
-          <TextInput
-            label="Judul"
-            value={this.state.judul}
-            onChangeText={text => this.setState({judul:text})}
-            style={{margin:10}}
-          />
-
-          <TextInput
-            label="Stok"
-            value={this.state.stok}
-            onChangeText={text => this.setState({stok:text})}
-            keyboardType="numeric"
-            style={{margin:10}}
-          />
-
-          <Button 
-              mode="contained" 
-              icon="check" 
-              onPress={() => this.onUpdate()}
+            <TextInput
+              label="Judul"
+              value={this.state.judul}
+              onChangeText={text => this.setState({judul:text})}
               style={{margin:10}}
-          >
-            Simpan
-          </Button>
+            />
 
+            <TextInput
+              label="Stok"
+              value={this.state.stok}
+              onChangeText={text => this.setState({stok:text})}
+              keyboardType="numeric"
+              style={{margin:10}}
+            />
+
+            <Button 
+                mode="contained" 
+                icon="check" 
+                onPress={() => this.onUpdate()}
+                style={{margin:10}}
+            >
+              Simpan
+            </Button>
+          </ScrollView>
+          
           <Portal>
             <Modal visible={this.state.isLoading}>
               <ActivityIndicator akategori_idating={true} size="large" color={Theme.colors.primary} />
