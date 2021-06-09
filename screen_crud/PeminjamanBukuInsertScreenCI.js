@@ -3,7 +3,7 @@ import { View, Alert } from 'react-native';
 import { Provider as PaperProvider, Appbar, Button, TextInput, Portal, Modal, ActivityIndicator, } from 'react-native-paper';
 import { Picker } from '@react-native-picker/picker';
 
-import supabase from '../config/supabase';
+import BaseUrl from '../config/BaseUrl';
 import Theme from '../config/Theme';
 
 class PeminjamanBukuInsertScreen extends Component {
@@ -27,46 +27,61 @@ class PeminjamanBukuInsertScreen extends Component {
   async getBukuData() {
       this.setState({isLoading:true});
 
-      ///memanggil api supabase
-      let { data, error } = await supabase
-        .from('buku')
-        .select('id, judul')
-        .gt('stok', 0)
-        .order('judul', {ascending:true});
+      //api url & parameter
+      let apiurl = BaseUrl()+'/buku';
+      const options = {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json'},
+      };
 
-      //memasukan respon ke state untuk data di render
-      this.setState({buku_data:data, isLoading:false});
+      //memanggil server api
+      fetch(apiurl, options)
+      .then(response => {return response.json()})
+
+      //response dari api
+      .then(responseData => {
+          //menangkap response api
+          let data = responseData.data;
+
+          //memasukan respon ke state untuk loop data di render
+          this.setState({buku_data:data, isLoading:false});
+      })
   }
 
   //memanggil api untuk menyimpan data
   async onInsert() {
       this.setState({isLoading:true});
 
-      //memanggil api supabase
-      let { data, error } = await supabase
-        .from('peminjaman_buku')
-        .insert({
-                  peminjaman_id: this.state.peminjaman_id,
-                  buku_id: this.state.buku_id,
-                  buku_rusak: false,
-                  buku_hilang: false,
-                });
+      //api url
+      let apiurl = BaseUrl()+'/peminjaman_buku';
 
-      //menampilkan response
-      let message = 'Data berhasil ditambah';
-      if(error) {
-        message = error.message;
-      }
+      //menyiapkan data untuk dikirim ke server api
+      const options = {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            buku_id: this.state.buku_id,
+            peminjaman_id: this.state.peminjaman_id,
+          })
+      };
 
-      Alert.alert(
-        "Pemberitahuan",
-        message,
-        [
-          { text: "OK", onPress: () => this.props.navigation.navigate('PeminjamanBukuListScreen', {peminjaman_id: this.state.peminjaman_id}) }
-        ]
-      );
+      //memanggil server api
+      fetch(apiurl, options)
+      .then(response => {return response.json()})
 
-      this.setState({isLoading:false});
+      //response dari api
+      .then(responseData => {
+          this.setState({isLoading:false});
+
+          //menampilkan response message
+          Alert.alert(
+            "Pemberitahuan",
+            responseData.message,
+            [
+              { text: "OK", onPress: () => this.props.navigation.navigate('PeminjamanBukuListScreen', {peminjaman_id: this.state.peminjaman_id}) }
+            ]
+          );
+      });
   }
 
   //memanggil api untuk menyimpan data

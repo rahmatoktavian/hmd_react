@@ -80,6 +80,7 @@ class BukuInsertScreen extends Component {
             selectedValue={this.state.kategori_id}
             onValueChange={(itemValue, itemIndex) => this.setState({kategori_id:itemValue})}
             style={{margin:10}}
+            mode='dropdown'
           >
             <Picker.Item label="Pilih Kategori" value="" />
             {/*loop data state*/}

@@ -15,14 +15,20 @@ const BottomTab = createMaterialBottomTabNavigator();
 import { Provider as PaperProvider } from 'react-native-paper';
 import Theme from './config/Theme';
 
-//screen
+//screen single
+import AnggotaListScreen from './screen_crud/AnggotaListScreen';
+import AnggotaInsertScreen from './screen_crud/AnggotaInsertScreen';
+import AnggotaUpdateScreen from './screen_crud/AnggotaUpdateScreen';
+
+//screen 1-many
 import BukuListScreen from './screen_crud/BukuListScreen';
 import BukuInsertScreen from './screen_crud/BukuInsertScreen';
 import BukuUpdateScreen from './screen_crud/BukuUpdateScreen';
 
-import AnggotaListScreen from './screen_crud/AnggotaListScreen';
-import AnggotaInsertScreen from './screen_crud/AnggotaInsertScreen';
-import AnggotaUpdateScreen from './screen_crud/AnggotaUpdateScreen';
+//screen many-many
+import PeminjamanListScreen from './screen_crud/PeminjamanListScreen';
+import PeminjamanBukuListScreen from './screen_crud/PeminjamanBukuListScreen';
+import PeminjamanBukuInsertScreen from './screen_crud/PeminjamanBukuInsertScreen';
 
 export default function App() {
   return (
@@ -34,6 +40,7 @@ export default function App() {
 	          	barStyle={{backgroundColor:Theme.colors.primary}} 
 	          	shifting={false}
 	        >	
+	        	{/*tab anggota dengan stack list, insert & update*/}
 	        	<BottomTab.Screen 
 					name="AnggotaListScreen"
 					options={{
@@ -62,6 +69,7 @@ export default function App() {
 				)}
                 </BottomTab.Screen>
 
+            	{/*tab buku dengan stack list, insert & update*/}
 				<BottomTab.Screen 
 					name="BukuListScreen"
 					options={{
@@ -84,6 +92,35 @@ export default function App() {
 		                <Stack.Screen 
 		                  name="BukuUpdateScreen"
 		                  component={BukuUpdateScreen}
+		                  options={{headerShown:false}}
+		                />
+					</Stack.Navigator>
+				)}
+                </BottomTab.Screen>
+
+            	{/*tab peminjaman dengan stack list, listbuku & listbuku insert*/}
+				<BottomTab.Screen 
+					name="PeminjamanListScreen"
+					options={{
+						tabBarLabel: 'Peminjaman',
+						tabBarIcon: ({color}) => (<MaterialCommunityIcons name="clipboard-list" color={color} size={25} />)
+					}}
+				>
+				{() => (
+              		<Stack.Navigator>
+		                <Stack.Screen 
+		                  name="PeminjamanListScreen"
+		                  component={PeminjamanListScreen}
+		                  options={{headerShown:false}}
+		                />
+		                <Stack.Screen 
+		                  name="PeminjamanBukuListScreen"
+		                  component={PeminjamanBukuListScreen}
+		                  options={{headerShown:false}} 
+		                />
+		                <Stack.Screen 
+		                  name="PeminjamanBukuInsertScreen"
+		                  component={PeminjamanBukuInsertScreen}
 		                  options={{headerShown:false}}
 		                />
 					</Stack.Navigator>
