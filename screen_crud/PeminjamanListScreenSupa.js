@@ -53,7 +53,7 @@ class PeminjamanListScreen extends Component {
           <List.Section>
               {/*loop data state*/}
 
-              {this.state.data.map((row,key) => (
+              {this.state.data && this.state.data.map((row,key) => (
                 <List.Item
                   key={key}
                   title={row.anggota.nama}

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Alert } from 'react-native';
 import { Provider as PaperProvider, Appbar, Button, TextInput, Portal, Modal, ActivityIndicator, } from 'react-native-paper';
 
-import supabase from '../config/supabase';
+import BaseUrl from '../config/BaseUrl';
 import Theme from '../config/Theme';
 
 class AnggotaUpdateScreen extends Component {
@@ -11,7 +11,7 @@ class AnggotaUpdateScreen extends Component {
       super(props);
 
       this.state = {
-        nim: this.props.route.params.nim,
+        nim: '',
         nama: '',
         jurusan: '',
         isLoading: false,
@@ -22,52 +22,71 @@ class AnggotaUpdateScreen extends Component {
       this.getData();
   }
 
-  async getData() {
+  getData() {
       this.setState({isLoading:true});
 
-      //memanggil api supabase (get data anggota by nim)
-      let { data, error } = await supabase
-        .from('anggota')
-        .select('nama, jurusan')
-        .eq('nim', this.state.nim)
-        .single()
+      //api url & parameter
+      let nim = this.props.route.params.nim;
+      let apiurl = BaseUrl()+'/anggota/detail/?nim='+nim;
+      const options = {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json'},
+      };
 
-      //memasukan respon ke state untuk data di render
-      this.setState({
-        nama: data.nama,
-        jurusan: data.jurusan, 
-        isLoading:false
-      });
+      //memanggil server api
+      fetch(apiurl, options)
+      .then(response => {return response.json()})
+
+      //response dari api
+      .then(responseData => { 
+          //menangkap response api
+          let data = responseData.data;
+   
+          //memasukan respon ke state untuk loop data di render
+          this.setState({
+              nim: data.nim,
+              nama: data.nama,
+              jurusan: data.jurusan, 
+              isLoading:false
+            });
+      })
   }
 
   //memanggil api untuk menyimpan data
-  async onUpdate() {
+  onUpdate() {
       this.setState({isLoading:true});
 
-      //memanggil api supabase
-      let { data, error } = await supabase
-        .from('anggota')
-        .update({
-                  nama: this.state.nama,
-                  jurusan: this.state.jurusan,
-                })
-        .eq('nim', this.state.nim);
+      //api url
+      let apiurl = BaseUrl()+'/anggota';
 
-      //menampilkan response
-      let message = 'Data berhasil diubah';
-      if(error) {
-        message = error.message;
-      } 
+      //menyiapkan data untuk dikirim ke server api
+      const options = {
+          method: 'PUT',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            nim: this.props.route.params.nim,
+            nama: this.state.nama,
+            jurusan: this.state.jurusan,
+          })
+      };
 
-      Alert.alert(
-        "Pemberitahuan",
-        message,
-        [
-          { text: "OK", onPress: () => this.props.navigation.navigate('AnggotaListScreen') }
-        ]
-      );
+      //memanggil server api
+      fetch(apiurl, options)
+      .then(response => {return response.json()})
 
-      this.setState({isLoading:false});
+      //response dari api
+      .then(responseData => {
+          this.setState({isLoading:false});
+
+          //menampilkan response message
+          Alert.alert(
+            "Pemberitahuan",
+            responseData.message,
+            [
+              { text: "OK", onPress: () => this.props.navigation.navigate('AnggotaListScreen') }
+            ]
+          );
+      })
   }
 
   onDeleteConfirm() {
@@ -81,30 +100,35 @@ class AnggotaUpdateScreen extends Component {
     );
   }
 
-  async onDelete() {
+  onDelete() {
       this.setState({isLoading:true});
 
-      //memanggil api supabase
-      let { data, error } = await supabase
-        .from('anggota')
-        .delete()
-        .eq('nim', this.state.nim);
-
-      //menampilkan response message
-      let message = 'Data berhasil diubah';
-      if(error) {
-        message = error.message;
-      }
+      //api url
+      let apiurl = BaseUrl()+'/anggota/delete/?nim='+this.props.route.params.nim;
       
-      Alert.alert(
-        "Pemberitahuan",
-        message,
-        [
-          { text: "OK", onPress: () => this.props.navigation.navigate('AnggotaListScreen') }
-        ]
-      );
+      //menyiapkan data untuk dikirim ke server api
+      const options = {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json'},
+      };
 
-      this.setState({isLoading:false});
+      //memanggil server api
+      fetch(apiurl, options)
+      .then(response => {return response.json()})
+
+      //response dari api
+      .then(responseData => {
+          this.setState({isLoading:false});
+
+          //menampilkan response message
+          Alert.alert(
+            "Pemberitahuan",
+            responseData.message,
+            [
+              { text: "OK", onPress: () => this.props.navigation.navigate('AnggotaListScreen') }
+            ]
+          );
+      })
   }
 
   render() {
@@ -118,8 +142,9 @@ class AnggotaUpdateScreen extends Component {
 
           <TextInput
             label="NIM"
-            value={this.state.nim.toString()}
+            value={this.state.nim}
             onChangeText={text => this.setState({nim:text})}
+            keyboardType="numeric"
             disabled={true}
             style={{margin:10}}
           />

@@ -50,7 +50,7 @@ class PeminjamanBukuListScreen extends Component {
       .then(responseData => {
           //menangkap response api
           let data = responseData.data;
-            
+          
           //memasukan respon ke state untuk loop data di render
           this.setState({data:data, isLoading:false});
       })
@@ -120,7 +120,7 @@ class PeminjamanBukuListScreen extends Component {
           <List.Section title="Buku">
               {/*loop data state*/}
 
-              {this.state.data.map((row,key) => (
+              {this.state.data && this.state.data.map((row,key) => (
                 <List.Item
                   key={key}
                   title={row.judul}

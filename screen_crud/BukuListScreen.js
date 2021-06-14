@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { View, ScrollView } from 'react-native';
-import { Provider as PaperProvider, Appbar, List, Portal, Modal, ActivityIndicator, Button, } from 'react-native-paper';
+import { Provider as PaperProvider, Appbar, Avatar, List, Portal, Modal, ActivityIndicator, Button, } from 'react-native-paper';
 
-import supabase from '../config/supabase';
+import BaseUrl from '../config/BaseUrl';
 import Theme from '../config/Theme';
 
 class BukuListScreen extends Component {
@@ -28,17 +28,28 @@ class BukuListScreen extends Component {
     this._unsubscribe();
   }
 
-  async getData() {
+  getData() {
       this.setState({isLoading:true});
 
-      //memanggil api supabase
-      let { data, error } = await supabase
-        .from('buku')
-        .select('id, judul, stok, kategori_buku(nama)')
-        .order('id', {ascending:false});
+      //api url & parameter
+      let apiurl = BaseUrl()+'/buku';
+      const options = {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json'},
+      };
 
-      //memasukan respon ke state untuk loop data di render
-      this.setState({data:data, isLoading:false});
+      //memanggil server api
+      fetch(apiurl, options)
+      .then(response => {return response.json()})
+
+      //response dari api
+      .then(responseData => {
+          //menangkap response api
+          let data = responseData.data;
+
+          //memasukan respon ke state untuk loop data di render
+          this.setState({data:data, isLoading:false});
+      })
   }
 
   render() {
@@ -52,11 +63,12 @@ class BukuListScreen extends Component {
           <List.Section>
               {/*loop data state*/}
 
-              {this.state.data.map((row,key) => (
+              {this.state.data && this.state.data.map((row,key) => (
                 <List.Item
                   key={key}
                   title={row.judul}
-                  description={'Kategori: '+row.kategori_buku.nama}
+                  description={'Kategori: '+row.nama_kategori}
+                  left={() => <Avatar.Text size={35} label={row.judul.charAt(0).toUpperCase()} style={{margin:10}} />}
                   right={props => <List.Icon icon="pencil" />}
                   onPress={() => this.props.navigation.navigate('BukuUpdateScreen', {id: row.id})}
                 />

@@ -103,7 +103,7 @@ class PeminjamanBukuListScreen extends Component {
           <List.Section title="Buku">
               {/*loop data state*/}
 
-              {this.state.data.map((row,key) => (
+              {this.state.data && this.state.data.map((row,key) => (
                 <List.Item
                   key={key}
                   title={row.buku.judul}

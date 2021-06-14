@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { View, Alert } from 'react-native';
-import { Provider as PaperProvider, Appbar, Button, TextInput, Portal, Modal, ActivityIndicator, } from 'react-native-paper';
+import { View, Alert, ScrollView } from 'react-native';
+import { Provider as PaperProvider, Appbar, Button, TextInput, Portal, Modal, ActivityIndicator, HelperText } from 'react-native-paper';
 import { Picker } from '@react-native-picker/picker';
 
-import supabase from '../config/supabase';
+import BaseUrl from '../config/BaseUrl';
 import Theme from '../config/Theme';
 
 class BukuInsertScreen extends Component {
@@ -25,47 +25,65 @@ class BukuInsertScreen extends Component {
       this.getKategoriData();
   }
 
-  async getKategoriData() {
+  getKategoriData() {
       this.setState({isLoading:true});
 
-      ///memanggil api supabase
-      let { data, error } = await supabase
-        .from('kategori_buku')
-        .select('id, nama')
-        .order('nama', {ascending:true});
+      //api url & parameter
+      let apiurl = BaseUrl()+'/kategori_buku';
+      const options = {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json'},
+      };
 
-      //memasukan respon ke state untuk data di render
-      this.setState({kategori_buku_data:data, isLoading:false});
+      //memanggil server api
+      fetch(apiurl, options)
+      .then(response => {return response.json()})
+
+      //response dari api
+      .then(responseData => { 
+          //menangkap response api
+          let data = responseData.data;
+
+          //memasukan respon ke state untuk loop data di render
+          this.setState({kategori_buku_data:data, isLoading:false});
+      })
   }
 
   //memanggil api untuk menyimpan data
-  async onInsert() {
+  onInsert() {
       this.setState({isLoading:true});
 
-      //memanggil api supabase
-      let { data, error } = await supabase
-        .from('buku')
-        .insert({
-                  kategori_id: this.state.kategori_id,
-                  judul: this.state.judul,
-                  stok: this.state.stok,
-                });
+      //api url
+      let apiurl = BaseUrl()+'/buku';
 
-      //menampilkan response
-      let message = 'Data berhasil ditambah';
-      if(error) {
-        message = error.message;
-      } 
+      //menyiapkan data untuk dikirim ke server api
+      const options = {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            kategori_id: this.state.kategori_id,
+            judul: this.state.judul,
+            stok: this.state.stok,
+          })
+      };
 
-      Alert.alert(
-        "Pemberitahuan",
-        message,
-        [
-          { text: "OK", onPress: () => this.props.navigation.navigate('BukuListScreen') }
-        ]
-      );
+      //memanggil server api
+      fetch(apiurl, options)
+      .then(response => {return response.json()})
 
-      this.setState({isLoading:false});
+      //response dari api
+      .then(responseData => {
+          this.setState({isLoading:false});
+
+          //menampilkan response message
+          Alert.alert(
+            "Pemberitahuan",
+            responseData.message,
+            [
+              { text: "OK", onPress: () => this.props.navigation.navigate('BukuListScreen') }
+            ]
+          );
+      });
   }
 
   render() {
@@ -76,44 +94,47 @@ class BukuInsertScreen extends Component {
             <Appbar.Content title="Insert Buku" />
           </Appbar.Header>
 
-          <Picker
-            selectedValue={this.state.kategori_id}
-            onValueChange={(itemValue, itemIndex) => this.setState({kategori_id:itemValue})}
-            style={{margin:10}}
-            mode='dropdown'
-          >
-            <Picker.Item label="Pilih Kategori" value="" />
-            {/*loop data state*/}
-            {this.state.kategori_buku_data.map((row,key) => (
-              <Picker.Item key={key} label={row.nama} value={row.id} />
-            ))}
-            {/*end loop*/}
-          </Picker>
-
-          <TextInput
-            label="Judul"
-            value={this.state.judul}
-            onChangeText={text => this.setState({judul:text})}
-            style={{margin:10}}
-          />
-
-          <TextInput
-            label="Stok"
-            value={this.state.stok}
-            onChangeText={text => this.setState({stok:text})}
-            keyboardType="numeric"
-            style={{margin:10}}
-          />
-
-          <Button 
-              mode="contained" 
-              icon="check" 
-              onPress={() => this.onInsert()}
+          <ScrollView>
+            <HelperText style={{marginHorizontal:10, marginTop:10}}>Kategori</HelperText>
+            <Picker
+              selectedValue={this.state.kategori_id}
+              onValueChange={(itemValue, itemIndex) => this.setState({kategori_id:itemValue})}
               style={{margin:10}}
-          >
-            Simpan
-          </Button>
+              mode='dropdown'
+            >
+              <Picker.Item label="Pilih Kategori" value="" />
+              {/*loop data state*/}
+              {this.state.kategori_buku_data.map((row,key) => (
+                <Picker.Item key={key} label={row.nama} value={row.id} />
+              ))}
+              {/*end loop*/}
+            </Picker>
 
+            <TextInput
+              label="Judul"
+              value={this.state.judul}
+              onChangeText={text => this.setState({judul:text})}
+              style={{margin:10}}
+            />
+
+            <TextInput
+              label="Stok"
+              value={this.state.stok}
+              onChangeText={text => this.setState({stok:text})}
+              keyboardType="numeric"
+              style={{margin:10}}
+            />
+
+            <Button 
+                mode="contained" 
+                icon="check" 
+                onPress={() => this.onInsert()}
+                style={{margin:10}}
+            >
+              Simpan
+            </Button>
+          </ScrollView>
+          
           <Portal>
             <Modal visible={this.state.isLoading}>
               <ActivityIndicator akategori_idating={true} size="large" color={Theme.colors.primary} />

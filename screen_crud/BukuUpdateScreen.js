@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import { View, Alert } from 'react-native';
+import { View, Alert, ScrollView } from 'react-native';
 import { Provider as PaperProvider, Appbar, Button, TextInput, HelperText, Portal, Modal, ActivityIndicator, } from 'react-native-paper';
 import { Picker } from '@react-native-picker/picker';
 
-import supabase from '../config/supabase';
 import BaseUrl from '../config/BaseUrl';
 import Theme from '../config/Theme';
 
@@ -15,7 +14,6 @@ class BukuInsertScreen extends Component {
       this.state = {
         kategori_buku_data: [],
 
-        id: this.props.route.params.id,
         kategori_id: '',
         judul: '',
         stok: '',
@@ -28,67 +26,97 @@ class BukuInsertScreen extends Component {
       this.getData();
   }
 
-  async getKategoriData() {
+  getKategoriData() {
       this.setState({isLoading:true});
 
-      ///memanggil api supabase
-      let { data, error } = await supabase
-        .from('kategori_buku')
-        .select('id, nama')
-        .order('nama', {ascending:true});
+      //api url & parameter
+      let apiurl = BaseUrl()+'/kategori_buku';
+      const options = {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json'},
+      };
 
-      //memasukan respon ke state untuk data di render
-      this.setState({kategori_buku_data:data, isLoading:false});
+      //memanggil server api
+      fetch(apiurl, options)
+      .then(response => {return response.json()})
+
+      //response dari api
+      .then(responseData => { 
+          //menangkap response api
+          let data = responseData.data;
+
+          //memasukan respon ke state untuk loop data di render
+          this.setState({kategori_buku_data:data, isLoading:false});
+      })
   }
 
-  async getData() {
+  getData() {
       this.setState({isLoading:true});
 
-      //memanggil api supabase (get data anggota by nim)
-      let { data, error } = await supabase
-        .from('buku')
-        .select('kategori_id, judul, stok')
-        .eq('id', this.state.id)
-        .single()
+      //api url & parameter
+      let id = this.props.route.params.id;
+      let apiurl = BaseUrl()+'/buku/detail/?id='+id;
 
-      //memasukan respon ke state untuk data di render
-      this.setState({
-        kategori_id: data.kategori_id,
-        judul: data.judul,
-        stok: data.stok, 
-        isLoading:false
-      });
+      const options = {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json'},
+      };
+
+      //memanggil server api
+      fetch(apiurl, options)
+      .then(response => {return response.json()})
+
+      //response dari api
+      .then(responseData => { 
+          //menangkap response api
+          let data = responseData.data;
+
+          //memasukan respon ke state untuk loop data di render
+          this.setState({
+              kategori_id: data.kategori_id,
+              judul: data.judul,
+              stok: data.stok,
+              isLoading:false
+          });
+      })
   }
 
   //memanggil api untuk menyimpan data
   async onUpdate() {
       this.setState({isLoading:true});
 
-      //memanggil api supabase
-      let { data, error } = await supabase
-        .from('buku')
-        .update({
-                  kategori_id: this.state.kategori_id,
-                  judul: this.state.judul,
-                  stok: this.state.stok,
-                })
-        .eq('id', this.state.id);
+      //api url
+      let apiurl = BaseUrl()+'/buku';
 
-      //menampilkan response
-      let message = 'Data berhasil diubah';
-      if(error) {
-        message = error.message;
-      }
+      //menyiapkan data untuk dikirim ke server api
+      const options = {
+          method: 'PUT',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            id: this.props.route.params.id,
+            kategori_id: this.state.kategori_id,
+            judul: this.state.judul,
+            stok: this.state.stok,
+          })
+      };
 
-      Alert.alert(
-        "Pemberitahuan",
-        message,
-        [
-          { text: "OK", onPress: () => this.props.navigation.navigate('BukuListScreen') }
-        ]
-      );
+      //memanggil server api
+      fetch(apiurl, options)
+      .then(response => {return response.json()})
 
-      this.setState({isLoading:false});
+      //response dari api
+      .then(responseData => {
+          this.setState({isLoading:false});
+
+          //menampilkan response message
+          Alert.alert(
+            "Pemberitahuan",
+            responseData.message,
+            [
+              { text: "OK", onPress: () => this.props.navigation.navigate('BukuListScreen') }
+            ]
+          );
+      })
   }
 
   onDeleteConfirm() {
@@ -105,27 +133,32 @@ class BukuInsertScreen extends Component {
   async onDelete() {
       this.setState({isLoading:true});
 
-      //memanggil api supabase
-      let { data, error } = await supabase
-        .from('buku')
-        .delete()
-        .eq('id', this.state.id);
+      //api url
+      let apiurl = BaseUrl()+'/buku/delete/?id='+this.props.route.params.id;
+      
+      //menyiapkan data untuk dikirim ke server api
+      const options = {
+          method: 'GET',
+          headers: {'Content-Type': 'application/json'},
+      };
 
-      //menampilkan response message
-      let message = 'Data berhasil diubah';
-      if(error) {
-        message = error.message;
-      }
+      //memanggil server api
+      fetch(apiurl, options)
+      .then(response => {return response.json()})
 
-      Alert.alert(
-        "Pemberitahuan",
-        message,
-        [
-          { text: "OK", onPress: () => this.props.navigation.navigate('BukuListScreen') }
-        ]
-      );
+      //response dari api
+      .then(responseData => {
+          this.setState({isLoading:false});
 
-      this.setState({isLoading:false});
+          //menampilkan response message
+          Alert.alert(
+            "Pemberitahuan",
+            responseData.message,
+            [
+              { text: "OK", onPress: () => this.props.navigation.navigate('BukuListScreen') }
+            ]
+          );
+      })
   }
 
   render() {
@@ -137,46 +170,47 @@ class BukuInsertScreen extends Component {
             <Appbar.Action icon="delete" onPress={() => this.onDeleteConfirm()} />
           </Appbar.Header>
 
-          
-          <HelperText style={{marginHorizontal:10, marginTop:10}}>Kategori</HelperText>
-          <Picker
-            selectedValue={this.state.kategori_id}
-            onValueChange={(itemValue, itemIndex) => this.setState({kategori_id:itemValue})}
-            style={{marginHorizontal:10}}
-            mode='dropdown'
-          >
-            <Picker.Item label="Pilih Kategori" value="" />
-            {/*loop data state*/}
-            {this.state.kategori_buku_data.map((row,key) => (
-              <Picker.Item key={key} label={row.nama} value={row.id} />
-            ))}
-            {/*end loop*/}
-          </Picker>
+          <ScrollView>
+            <HelperText style={{marginHorizontal:10, marginTop:10}}>Kategori</HelperText>
+            <Picker
+              selectedValue={this.state.kategori_id}
+              onValueChange={(itemValue, itemIndex) => this.setState({kategori_id:itemValue})}
+              style={{marginHorizontal:10}}
+              mode='dropdown'
+            >
+              <Picker.Item label="Pilih Kategori" value="" />
+              {/*loop data state*/}
+              {this.state.kategori_buku_data.map((row,key) => (
+                <Picker.Item key={key} label={row.nama} value={row.id} />
+              ))}
+              {/*end loop*/}
+            </Picker>
 
-          <TextInput
-            label="Judul"
-            value={this.state.judul}
-            onChangeText={text => this.setState({judul:text})}
-            style={{margin:10}}
-          />
-
-          <TextInput
-            label="Stok"
-            value={this.state.stok.toString()}
-            onChangeText={text => this.setState({stok:text})}
-            keyboardType="numeric"
-            style={{margin:10}}
-          />
-
-          <Button 
-              mode="contained" 
-              icon="check" 
-              onPress={() => this.onUpdate()}
+            <TextInput
+              label="Judul"
+              value={this.state.judul}
+              onChangeText={text => this.setState({judul:text})}
               style={{margin:10}}
-          >
-            Simpan
-          </Button>
+            />
 
+            <TextInput
+              label="Stok"
+              value={this.state.stok}
+              onChangeText={text => this.setState({stok:text})}
+              keyboardType="numeric"
+              style={{margin:10}}
+            />
+
+            <Button 
+                mode="contained" 
+                icon="check" 
+                onPress={() => this.onUpdate()}
+                style={{margin:10}}
+            >
+              Simpan
+            </Button>
+          </ScrollView>
+          
           <Portal>
             <Modal visible={this.state.isLoading}>
               <ActivityIndicator akategori_idating={true} size="large" color={Theme.colors.primary} />
