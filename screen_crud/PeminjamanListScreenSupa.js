@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, ScrollView } from 'react-native';
 import { Provider as PaperProvider, Appbar, List, Portal, Modal, ActivityIndicator, Button, IconButton } from 'react-native-paper';
 
-import BaseUrl from '../config/BaseUrl';
+import supabase from '../config/supabase';
 import Theme from '../config/Theme';
 
 class PeminjamanListScreen extends Component {
@@ -32,25 +32,14 @@ class PeminjamanListScreen extends Component {
   async getData() {
       this.setState({isLoading:true});
 
-      //api url & parameter
-      let apiurl = BaseUrl()+'/peminjaman';
-      const options = {
-          method: 'GET',
-          headers: {'Content-Type': 'application/json'},
-      };
+      //memanggil api supabase
+      let { data, error } = await supabase
+        .from('peminjaman')
+        .select('id, tanggal_pinjam, anggota(nama)')
+        .order('id', {ascending:false});
 
-      //memanggil server api
-      fetch(apiurl, options)
-      .then(response => {return response.json()})
-
-      //response dari api
-      .then(responseData => {
-          //menangkap response api
-          let data = responseData.data;
-
-          //memasukan respon ke state untuk loop data di render
-          this.setState({data:data, isLoading:false});
-      })
+      //memasukan respon ke state untuk loop data di render
+      this.setState({data:data, isLoading:false});
   }
 
   render() {
@@ -67,10 +56,10 @@ class PeminjamanListScreen extends Component {
               {this.state.data.map((row,key) => (
                 <List.Item
                   key={key}
-                  title={row.nama_anggota}
+                  title={row.anggota.nama}
                   description={'Tgl Pinjam: '+row.tanggal_pinjam}
                   right={props => <View style={{flexDirection:'row'}}>
-                                    <IconButton icon="book" onPress={() => this.props.navigation.navigate('PeminjamanBukuListScreen', {peminjaman_id: row.id, nama: row.nama_anggota, tanggal_pinjam: row.tanggal_pinjam})} />
+                                    <IconButton icon="book" onPress={() => this.props.navigation.navigate('PeminjamanBukuListScreen', {peminjaman_id: row.id, nama: row.anggota.nama, tanggal_pinjam: row.tanggal_pinjam})} />
                                     <IconButton icon="pencil" onPress={() => this.props.navigation.navigate('PeminjamanUpdateScreen', {id: row.id})} />
                                   </View>}
                 />

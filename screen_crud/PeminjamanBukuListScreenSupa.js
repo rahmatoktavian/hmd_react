@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, ScrollView, Alert } from 'react-native';
 import { Provider as PaperProvider, List, Appbar, Portal, Modal, ActivityIndicator, Button, } from 'react-native-paper';
 
-import BaseUrl from '../config/BaseUrl';
+import supabase from '../config/supabase';
 import Theme from '../config/Theme';
 
 class PeminjamanBukuListScreen extends Component {
@@ -35,25 +35,15 @@ class PeminjamanBukuListScreen extends Component {
   async getData() {
       this.setState({isLoading:true});
 
-      //api url & parameter
-      let apiurl = BaseUrl()+'/peminjaman_buku?peminjaman_id='+this.state.peminjaman_id;
-      const options = {
-          method: 'GET',
-          headers: {'Content-Type': 'application/json'},
-      };
+      //memanggil api supabase
+      let { data, error } = await supabase
+        .from('peminjaman_buku')
+        .select('id, buku(judul)')
+        .eq('peminjaman_id', this.state.peminjaman_id)
+        .order('peminjaman_id', {ascending:false});
 
-      //memanggil server api
-      fetch(apiurl, options)
-      .then(response => {return response.json()})
-
-      //response dari api
-      .then(responseData => {
-          //menangkap response api
-          let data = responseData.data;
-            
-          //memasukan respon ke state untuk loop data di render
-          this.setState({data:data, isLoading:false});
-      })
+      //memasukan respon ke state untuk loop data di render
+      this.setState({data:data, isLoading:false});
   }
 
   onDeleteConfirm(id) {
@@ -70,35 +60,28 @@ class PeminjamanBukuListScreen extends Component {
   async onDelete(id) {
       this.setState({isLoading:true});
 
-      //api url
-      let apiurl = BaseUrl()+'/peminjaman_buku/delete/?id='+id;
-      
-      //menyiapkan data untuk dikirim ke server api
-      const options = {
-          method: 'GET',
-          headers: {'Content-Type': 'application/json'},
-      };
+      //memanggil api supabase
+      let { data, error } = await supabase
+        .from('peminjaman_buku')
+        .delete()
+        .eq('id', id);
 
-      //memanggil server api
-      fetch(apiurl, options)
-      .then(response => {return response.json()})
+      //menampilkan response message
+      let message = 'Data berhasil dihapus';
+      if(error) {
+        message = error.message;
+      }
 
-      //response dari api
-      .then(responseData => {
-          this.setState({isLoading:false});
+      Alert.alert(
+        "Pemberitahuan",
+        message,
+        [
+          { text: "OK" }
+        ]
+      );
 
-          //menampilkan response message
-          Alert.alert(
-            "Pemberitahuan",
-            responseData.message,
-            [
-              { text: "OK" }
-            ]
-          );
-
-          this.setState({isLoading:false});
-          this.getData();
-      })
+      this.setState({isLoading:false});
+      this.getData();
   }
 
   render() {
@@ -123,7 +106,7 @@ class PeminjamanBukuListScreen extends Component {
               {this.state.data.map((row,key) => (
                 <List.Item
                   key={key}
-                  title={row.judul}
+                  title={row.buku.judul}
                   left={props => <List.Icon icon="book" />}
                   right={props => <List.Icon icon="delete" />}
                   onPress={() => this.onDeleteConfirm(row.id)}
