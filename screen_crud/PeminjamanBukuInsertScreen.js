@@ -88,49 +88,36 @@ class PeminjamanBukuInsertScreen extends Component {
   async onInsertTrans() {
       this.setState({isLoading:true});
 
-      //memanggil api supabase
-      let { data, error } = await supabase
-        .from('peminjaman_buku')
-        .insert({
-                  peminjaman_id: this.state.peminjaman_id,
-                  buku_id: this.state.buku_id,
-                  buku_rusak: false,
-                  buku_hilang: false,
-                });
+      //api url
+      let apiurl = BaseUrl()+'/peminjaman_buku/insert_trans';
 
-      //menampilkan response
-      let message = 'Data berhasil ditambah';
-      if(error) {
-        message = error.message;
-      } else {
-        //ambil data stok buku
-        let { data:buku } = await supabase
-          .from('buku')
-          .select('stok')
-          .eq('id', this.state.buku_id)
-          .single();
+      //menyiapkan data untuk dikirim ke server api
+      const options = {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            buku_id: this.state.buku_id,
+            peminjaman_id: this.state.peminjaman_id,
+          })
+      };
 
-        //stok baru baru
-        let newstok = buku.stok - 1;
+      //memanggil server api
+      fetch(apiurl, options)
+      .then(response => {return response.json()})
 
-        //update stok buku
-        let { data:buku_update } = await supabase
-          .from('buku')
-          .update({
-                    stok: newstok
-                  })
-          .eq('id', this.state.buku_id)
-      }
+      //response dari api
+      .then(responseData => {
+          this.setState({isLoading:false});
 
-      Alert.alert(
-        "Pemberitahuan",
-        message,
-        [
-          { text: "OK", onPress: () => this.props.navigation.navigate('PeminjamanBukuListScreen', {peminjaman_id: this.state.peminjaman_id}) }
-        ]
-      );
-
-      this.setState({isLoading:false});
+          //menampilkan response message
+          Alert.alert(
+            "Pemberitahuan",
+            responseData.message,
+            [
+              { text: "OK", onPress: () => this.props.navigation.navigate('PeminjamanBukuListScreen', {peminjaman_id: this.state.peminjaman_id}) }
+            ]
+          );
+      });
   }
 
   render() {

@@ -27,13 +27,6 @@ class OutputScreen extends Component {
                 onPress={() => this.props.navigation.navigate('ChartPieScreen')}
               />
               <List.Item
-                key={1}
-                title="Line Chart"
-                left={props => <List.Icon icon="chart-line" />}
-                right={props => <List.Icon icon="arrow-right" />}
-                onPress={() => this.props.navigation.navigate('ChartLineScreen')}
-              />
-              <List.Item
                 key={2}
                 title="Report Summary"
                 left={props => <List.Icon icon="folder" />}

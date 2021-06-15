@@ -30,10 +30,12 @@ import PeminjamanListScreen from './screen_crud/PeminjamanListScreen';
 import PeminjamanBukuListScreen from './screen_crud/PeminjamanBukuListScreen';
 import PeminjamanBukuInsertScreen from './screen_crud/PeminjamanBukuInsertScreen';
 
+//home
+import HomeScreen from './screen_output/HomeScreen';
+
 //report & chart
 import OutputScreen from './screen_output/OutputScreen';
 import ChartPieScreen from './screen_output/ChartPieScreen';
-import ChartLineScreen from './screen_output/ChartLineScreen';
 import ReportSummaryScreen from './screen_output/ReportSummaryScreen';
 import ReportDetailScreen from './screen_output/ReportDetailScreen';
 
@@ -47,6 +49,16 @@ export default function App() {
 	          	barStyle={{backgroundColor:Theme.colors.primary}} 
 	          	shifting={false}
 	        >	
+	        	{/*tab anggota dengan stack list, insert & update*/}
+	        	<BottomTab.Screen 
+					name="Home"
+					component={HomeScreen}
+					options={{
+						tabBarLabel: 'Home',
+						tabBarIcon: ({color}) => (<MaterialCommunityIcons name="home" color={color} size={25} />)
+					}}
+				/>
+
 	        	{/*tab anggota dengan stack list, insert & update*/}
 	        	<BottomTab.Screen 
 					name="AnggotaListScreen"
@@ -152,11 +164,6 @@ export default function App() {
 		                <Stack.Screen 
 		                  name="ChartPieScreen"
 		                  component={ChartPieScreen}
-		                  options={{headerShown:false}}
-		                />
-		                <Stack.Screen 
-		                  name="ChartLineScreen"
-		                  component={ChartLineScreen}
 		                  options={{headerShown:false}}
 		                />
 		                <Stack.Screen 
