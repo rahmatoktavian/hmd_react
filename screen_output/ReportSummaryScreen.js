@@ -36,7 +36,7 @@ class ReportSummaryScreen extends Component {
       //api url & parameter
       let apiurl = BaseUrl()+'/output/rekap_buku_perkategori';
       const options = {
-          method: 'GET',
+          method: 'POST',
           headers: {'Content-Type': 'application/json'},
       };
 
@@ -108,6 +108,8 @@ class ReportSummaryScreen extends Component {
           </DataTable>
           </ScrollView>
 
+          {/*export pdf*/}
+          {this.state.data &&
           <Button 
               mode="outlined" 
               icon="download" 
@@ -116,6 +118,7 @@ class ReportSummaryScreen extends Component {
           >
             Export PDF
           </Button>
+          }
 
           <Portal>
             <Modal visible={this.state.isLoading}>

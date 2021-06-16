@@ -15,11 +15,18 @@ class AnggotaInsertScreen extends Component {
         nama: '',
         jurusan: '',
         isLoading: false,
+
+        displayDateTimePicker: false,
+        tanggal: new Date(),
       };
   }
 
-  //memanggil api untuk menyimpan data
   onInsert() {
+    console.log('tanggal', dateFormat(this.state.tanggal))
+  }
+  
+  //memanggil api untuk menyimpan data
+  onInsert2() {
       this.setState({isLoading:true});
 
       //api url

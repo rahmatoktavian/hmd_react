@@ -1,19 +1,20 @@
 import * as React from 'react';
 
 const dateFormat = (value) => {
+
 	let result = '';
 	if(value) {
+		const date = value;
+
 	    //date
-	    const dateNum = value.substr(-2);
+	    const dateFormat = '0'+date.getDate();
+	    const dateNum = dateFormat.substr(-2);
 
-	    //month
-	    const monthNum = value.substr(5, 2) - 1;
-	    const monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agy", "Sep", "Okt", "Nov", "Des"];
+	    //date
+	    const monthFormat = '0'+(date.getMonth()+1);
+	    const monthNum = monthFormat.substr(-2);
 
-	    //year
-	    const yearNum = value.substr(2, 2);
-
-	    result = dateNum+' '+monthNames[monthNum]+' '+yearNum;
+	    result = date.getFullYear()+'-'+monthNum+'-'+dateNum;
 	}
     return result;
 }

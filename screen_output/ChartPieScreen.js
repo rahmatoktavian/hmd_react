@@ -39,7 +39,7 @@ class ChartPieScreen extends Component {
       //api url & parameter
       let apiurl = BaseUrl()+'/output/rekap_buku_perkategori';
       const options = {
-          method: 'GET',
+          method: 'POST',
           headers: {'Content-Type': 'application/json'},
       };
 

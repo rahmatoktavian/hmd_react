@@ -5,7 +5,7 @@ import { LineChart } from "react-native-chart-kit";
 
 import BaseUrl from '../config/BaseUrl';
 import Theme from '../config/Theme';
-import dateFormat from '../comp/dateFormat';
+import dateFormatDB from '../comp/dateFormatDB';
 
 class HomeScreen extends Component {
 
@@ -36,7 +36,7 @@ class HomeScreen extends Component {
       //api url & parameter
       let apiurl = BaseUrl()+'/output/rekap_peminjaman_perhari';
       const options = {
-          method: 'GET',
+          method: 'POST',
           headers: {'Content-Type': 'application/json'},
       };
 
@@ -53,7 +53,7 @@ class HomeScreen extends Component {
           let labels = [];
           let datalist = [];
           data.map(row => {
-            labels.push(dateFormat(row.tanggal_pinjam));
+            labels.push(dateFormatDB(row.tanggal_pinjam));
             datalist.push(row.total_pinjam);
           })
 
@@ -97,14 +97,14 @@ class HomeScreen extends Component {
             <DataTable>
               <DataTable.Header>
                 <DataTable.Title>Tanggal</DataTable.Title>
-                <DataTable.Title numeric>Total Pinjam</DataTable.Title>
+                <DataTable.Title numeric>Total Peminjaman</DataTable.Title>
               </DataTable.Header>
 
               {/*loop data state*/}
               {this.state.data && this.state.data.map((row) => (
                 <DataTable.Row>
-                  <DataTable.Cell>{dateFormat(row.tanggal_pinjam)}</DataTable.Cell>
-                  <DataTable.Cell numeric>{row.total_pinjam}x</DataTable.Cell>
+                  <DataTable.Cell>{dateFormatDB(row.tanggal_pinjam)}</DataTable.Cell>
+                  <DataTable.Cell numeric>{row.total_pinjam} Data</DataTable.Cell>
                 </DataTable.Row>
               ))}
               {/*end loop*/}
