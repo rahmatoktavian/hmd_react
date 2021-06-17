@@ -21,12 +21,8 @@ class AnggotaInsertScreen extends Component {
       };
   }
 
-  onInsert() {
-    console.log('tanggal', dateFormat(this.state.tanggal))
-  }
-  
   //memanggil api untuk menyimpan data
-  onInsert2() {
+  onInsert() {
       this.setState({isLoading:true});
 
       //api url
