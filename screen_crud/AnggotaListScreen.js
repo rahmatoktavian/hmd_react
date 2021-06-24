@@ -43,7 +43,7 @@ class AnggotaListScreen extends Component {
       .then(response => {return response.json()})
 
       //response dari api
-      .then(responseData => { 
+      .then(responseData => {
           //menangkap response api
           let data = responseData.data;
 
@@ -74,10 +74,10 @@ class AnggotaListScreen extends Component {
               {/*end loop*/}
           </List.Section>
           </ScrollView>
-          
-          <Button 
-              mode="contained" 
-              icon="plus" 
+
+          <Button
+              mode="contained"
+              icon="plus"
               onPress={() => this.props.navigation.navigate('AnggotaInsertScreen')}
               style={{margin:20}}
           >
