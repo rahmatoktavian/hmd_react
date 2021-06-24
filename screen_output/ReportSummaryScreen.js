@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { View, ScrollView } from 'react-native';
-import { Provider as PaperProvider, Appbar, Avatar, DataTable, Portal, Modal, ActivityIndicator, Button, } from 'react-native-paper';
+import { View, ScrollView, Text } from 'react-native';
+import { Provider as PaperProvider, Appbar, Avatar, DataTable, Portal, Modal, ActivityIndicator, Button, Subheading, } from 'react-native-paper';
 
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing'
@@ -49,8 +49,13 @@ class ReportSummaryScreen extends Component {
           //menangkap response api
           let data = responseData.data;
 
+          let total = 0;
+          data.map(row => {
+            total += parseInt(row.total_buku);
+          })
+
           //memasukan respon ke state untuk chart
-          this.setState({data:data, isLoading:false});
+          this.setState({data:data, total:total, isLoading:false});
       })
   }
 
@@ -71,6 +76,11 @@ class ReportSummaryScreen extends Component {
         content += '<td>'+row.total_buku+'</td>';
       content += '</tr>';
     })
+    content += '<tr>';
+      content += '<td>Total</td>';
+      content += '<td>'+this.state.total+'</td>';
+    content += '</tr>';
+
     content += '</table>';
     content += '<style>th, td {border: 1px solid black;border-collapse: collapse;}</style>';
 
@@ -105,8 +115,13 @@ class ReportSummaryScreen extends Component {
             ))}
             {/*end loop*/}
 
+            <DataTable.Row>
+                <DataTable.Cell><Subheading style={{fontWeight:'bold'}}>Total</Subheading></DataTable.Cell>
+                <DataTable.Cell numeric><Subheading>{this.state.total}</Subheading></DataTable.Cell>
+            </DataTable.Row>
+
           </DataTable>
-          </ScrollView>
+          </ScrollView> 
 
           {/*export pdf*/}
           {this.state.data &&
