@@ -29,6 +29,7 @@ import BukuUpdateScreen from './screen_crud/BukuUpdateScreen';
 import PeminjamanListScreen from './screen_crud/PeminjamanListScreen';
 import PeminjamanBukuListScreen from './screen_crud/PeminjamanBukuListScreen';
 import PeminjamanBukuInsertScreen from './screen_crud/PeminjamanBukuInsertScreen';
+import PeminjamanBukuInsertBarcodeScreen from './screen_crud/PeminjamanBukuInsertBarcodeScreen';
 
 export default function App() {
   return (
@@ -67,9 +68,9 @@ export default function App() {
 		                />
 					</Stack.Navigator>
 				)}
-                </BottomTab.Screen>
+        </BottomTab.Screen>
 
-            	{/*tab buku dengan stack list, insert & update*/}
+      	{/*tab buku dengan stack list, insert & update*/}
 				<BottomTab.Screen 
 					name="BukuListScreen"
 					options={{
@@ -96,9 +97,9 @@ export default function App() {
 		                />
 					</Stack.Navigator>
 				)}
-                </BottomTab.Screen>
+        </BottomTab.Screen>
 
-            	{/*tab peminjaman dengan stack list, listbuku & listbuku insert*/}
+        {/*tab peminjaman dengan stack list, listbuku & listbuku insert*/}
 				<BottomTab.Screen 
 					name="PeminjamanListScreen"
 					options={{
@@ -123,9 +124,14 @@ export default function App() {
 		                  component={PeminjamanBukuInsertScreen}
 		                  options={{headerShown:false}}
 		                />
+		                <Stack.Screen 
+		                  name="PeminjamanBukuInsertBarcodeScreen"
+		                  component={PeminjamanBukuInsertBarcodeScreen}
+		                  options={{headerShown:false}}
+		                />
 					</Stack.Navigator>
 				)}
-                </BottomTab.Screen>
+      	</BottomTab.Screen>
 
 	    	</BottomTab.Navigator>
 	    </NavigationContainer>

@@ -66,7 +66,7 @@ class PeminjamanListScreen extends Component {
               {this.state.data && this.state.data.map((row,key) => (
                 <List.Item
                   key={key}
-                  title={row.nama_anggota}
+                  title={row.nama_anggota+' '+row.id}
                   description={'Tgl Pinjam: '+row.tanggal_pinjam}
                   right={props => <View style={{flexDirection:'row'}}>
                                     <IconButton icon="book" onPress={() => this.props.navigation.navigate('PeminjamanBukuListScreen', {peminjaman_id: row.id, nama: row.nama_anggota, tanggal_pinjam: row.tanggal_pinjam})} />

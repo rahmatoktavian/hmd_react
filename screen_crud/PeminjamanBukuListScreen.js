@@ -142,6 +142,15 @@ class PeminjamanBukuListScreen extends Component {
             Insert Buku
           </Button>
 
+          <Button 
+              mode="contained" 
+              icon="barcode-scan" 
+              onPress={() => this.props.navigation.navigate('PeminjamanBukuInsertBarcodeScreen', {peminjaman_id: this.state.peminjaman_id})}
+              style={{margin:20}}
+          >
+            Insert via Barcode
+          </Button>
+
           <Portal>
             <Modal visible={this.state.isLoading}>
               <ActivityIndicator animating={true} size="large" color={Theme.colors.primary} />
