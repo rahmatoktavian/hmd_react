@@ -58,7 +58,7 @@ class LoginScreen extends Component {
           let status = responseData.status;
           
           //jika login valid
-          if(status) {
+          if(status == true) {
 
             //response api (data user)
             let data = responseData.data;

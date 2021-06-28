@@ -11,7 +11,7 @@ class ProfileScreen extends Component {
   constructor(props) {
       super(props);
 
-      //redux variable
+      //menarik redux variable
       this.state = storeApp.getState();  
       storeApp.subscribe(()=>{
         this.setState(storeApp.getState());

@@ -29,6 +29,7 @@ import BukuUpdateScreen from '../screen_crud/BukuUpdateScreen';
 import PeminjamanListScreen from '../screen_crud/PeminjamanListScreen';
 import PeminjamanBukuListScreen from '../screen_crud/PeminjamanBukuListScreen';
 import PeminjamanBukuInsertScreen from '../screen_crud/PeminjamanBukuInsertScreen';
+import PeminjamanBukuInsertBarcodeScreen from '../screen_crud/PeminjamanBukuInsertBarcodeScreen';
 
 //home
 import HomeScreen from '../screen_output/HomeScreen';
@@ -140,6 +141,11 @@ export default function PetugasNav() {
 		                <Stack.Screen 
 		                  name="PeminjamanBukuInsertScreen"
 		                  component={PeminjamanBukuInsertScreen}
+		                  options={{headerShown:false}}
+		                />
+		                <Stack.Screen 
+		                  name="PeminjamanBukuInsertBarcodeScreen"
+		                  component={PeminjamanBukuInsertBarcodeScreen}
 		                  options={{headerShown:false}}
 		                />
 					</Stack.Navigator>
