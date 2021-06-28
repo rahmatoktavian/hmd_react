@@ -29,39 +29,40 @@ export default function AnggotaNav() {
 	          	barStyle={{backgroundColor:Theme.colors.primary}} 
 	          	shifting={false}
 	        >	
-	        	{/*tab anggota dengan stack list, insert & update*/}
-	        	<BottomTab.Screen 
-					name="ProfileScreen"
-					component={ProfileScreen}
-					options={{
-						tabBarLabel: 'Profile',
-						tabBarIcon: ({color}) => (<MaterialCommunityIcons name="account" color={color} size={25} />)
-					}}
-				/>
+	        
+	        {/*tab anggota dengan stack list, insert & update*/}
+	       	<BottomTab.Screen 
+						name="ProfileScreen"
+						component={ProfileScreen}
+						options={{
+							tabBarLabel: 'Profile',
+							tabBarIcon: ({color}) => (<MaterialCommunityIcons name="account" color={color} size={25} />)
+						}}
+					/>
 
-	        	{/*tab anggota dengan stack list, insert & update*/}
-	        	<BottomTab.Screen 
-					name="PeminjamanSayaScreen"
-					options={{
-						tabBarLabel: 'Peminjaman Saya',
-						tabBarIcon: ({color}) => (<MaterialCommunityIcons name="book" color={color} size={25} />)
-					}}
-				>
-				{() => (
-              		<Stack.Navigator>
-		                <Stack.Screen 
-		                  name="PeminjamanSayaScreen"
-		                  component={PeminjamanSayaScreen}
-		                  options={{headerShown:false}} 
-		                />
-		                <Stack.Screen 
-		                  name="PeminjamanSayaBukuScreen"
-		                  component={PeminjamanSayaBukuScreen}
-		                  options={{headerShown:false}} 
-		                />
-					</Stack.Navigator>
-				)}
-                </BottomTab.Screen>
+	        {/*tab anggota dengan stack list, insert & update*/}
+	        <BottomTab.Screen 
+						name="PeminjamanSayaScreen"
+						options={{
+							tabBarLabel: 'Peminjaman Saya',
+							tabBarIcon: ({color}) => (<MaterialCommunityIcons name="book" color={color} size={25} />)
+						}}
+					>
+					{() => (
+	              		<Stack.Navigator>
+			                <Stack.Screen 
+			                  name="PeminjamanSayaScreen"
+			                  component={PeminjamanSayaScreen}
+			                  options={{headerShown:false}} 
+			                />
+			                <Stack.Screen 
+			                  name="PeminjamanSayaBukuScreen"
+			                  component={PeminjamanSayaBukuScreen}
+			                  options={{headerShown:false}} 
+			                />
+						</Stack.Navigator>
+					)}
+         	</BottomTab.Screen>
 
 	    	</BottomTab.Navigator>
 	    </NavigationContainer>
