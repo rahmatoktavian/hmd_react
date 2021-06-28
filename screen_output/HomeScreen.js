@@ -6,13 +6,21 @@ import { LineChart } from "react-native-chart-kit";
 import BaseUrl from '../config/BaseUrl';
 import Theme from '../config/Theme';
 import dateFormatDB from '../comp/dateFormatDB';
+import storeApp from '../config/storeApp';
 
 class HomeScreen extends Component {
 
   constructor(props) {
       super(props);
-    
+      
+      //redux variable
+      this.state = storeApp.getState();  
+      storeApp.subscribe(()=>{
+        this.setState(storeApp.getState());
+      });
+
       this.state = {
+        ...this.state,
         labels: [],
         datalist: [0],
       }
@@ -62,11 +70,20 @@ class HomeScreen extends Component {
       })
   }
 
+  onLogout() {
+      //update redux
+      storeApp.dispatch({
+          type: 'LOGIN',
+          payload: { isLogin:false, user_type:'', nim:'', petugas_id:'' }
+      });
+  }
+
   render() {
       return (
         <PaperProvider theme={Theme}>
           <Appbar.Header>
             <Appbar.Content title="Home" />
+            <Appbar.Action icon="power" onPress={() => this.onLogout()} />
           </Appbar.Header>
 
           <ScrollView style={{backgroundColor:'white'}}>
