@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Alert } from 'react-native';
 import { Provider as PaperProvider, Appbar, Button, TextInput, Portal, Modal, ActivityIndicator, } from 'react-native-paper';
 
-import BaseUrl from '../config/BaseUrl';
+import supabase from '../config/supabase';
 import Theme from '../config/Theme';
 
 class AnggotaInsertScreen extends Component {
@@ -15,47 +15,37 @@ class AnggotaInsertScreen extends Component {
         nama: '',
         jurusan: '',
         isLoading: false,
-
-        displayDateTimePicker: false,
-        tanggal: new Date(),
       };
   }
 
   //memanggil api untuk menyimpan data
-  onInsert() {
+  async onInsert() {
       this.setState({isLoading:true});
 
-      //api url
-      let apiurl = BaseUrl()+'/anggota';
+      //memanggil api supabase
+      let { data, error } = await supabase
+        .from('anggota')
+        .insert({
+                  nim: this.state.nim,
+                  nama: this.state.nama,
+                  jurusan: this.state.jurusan,
+                });
 
-      //menyiapkan data untuk dikirim ke server api
-      const options = {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({
-            nim: this.state.nim,
-            nama: this.state.nama,
-            jurusan: this.state.jurusan,
-          })
-      };
+      //menampilkan response
+      let message = 'Data berhasil ditambah';
+      if(error) {
+        message = error.message;
+      } 
 
-      //memanggil server api
-      fetch(apiurl, options)
-      .then(response => {return response.json()})
+      Alert.alert(
+        "Pemberitahuan",
+        message,
+        [
+          { text: "OK", onPress: () => this.props.navigation.navigate('AnggotaListScreen') }
+        ]
+      );
 
-      //response dari api
-      .then(responseData => {
-          this.setState({isLoading:false});
-
-          //menampilkan response message
-          Alert.alert(
-            "Pemberitahuan",
-            responseData.message,
-            [
-              { text: "OK", onPress: () => this.props.navigation.navigate('AnggotaListScreen') }
-            ]
-          );
-      })
+      this.setState({isLoading:false});
   }
 
   render() {
