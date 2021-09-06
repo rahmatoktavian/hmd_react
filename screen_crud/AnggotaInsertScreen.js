@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { View, Alert } from 'react-native';
 import { Provider as PaperProvider, Appbar, Button, TextInput, Portal, Modal, ActivityIndicator, } from 'react-native-paper';
+import ValidationComponent from 'react-native-form-validator';
 
 import supabase from '../config/supabase';
 import Theme from '../config/Theme';
 
-class AnggotaInsertScreen extends Component {
+class AnggotaInsertScreen extends ValidationComponent {
 
   constructor(props) {
       super(props);
@@ -20,6 +21,13 @@ class AnggotaInsertScreen extends Component {
 
   //memanggil api untuk menyimpan data
   async onInsert() {
+    this.validate({
+      nim: {required:true, numbers:true},
+      nama: {required:true},
+      jurusan: {required:true},
+    });
+
+    if(this.isFormValid()) {
       this.setState({isLoading:true});
 
       //memanggil api supabase
@@ -46,6 +54,10 @@ class AnggotaInsertScreen extends Component {
       );
 
       this.setState({isLoading:false});
+
+    } else {
+      alert(this.getErrorMessages());
+    }
   }
 
   render() {
