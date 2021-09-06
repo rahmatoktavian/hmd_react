@@ -40,7 +40,7 @@ export default function App() {
         				/>
 
         				<BottomTab.Screen
-        					name="ProfileScreen"
+        					name="Profile"
         					options={{
         						tabBarLabel: 'Profile',
         						tabBarIcon: ({color}) => (<MaterialCommunityIcons name="account-outline" color={color} size={25} />)

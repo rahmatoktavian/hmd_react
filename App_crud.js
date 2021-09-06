@@ -32,103 +32,103 @@ import PeminjamanBukuInsertScreen from './screen_crud/PeminjamanBukuInsertScreen
 
 export default function App() {
   return (
-  	<PaperProvider theme={Theme}>
-	    <NavigationContainer>
-	      	<BottomTab.Navigator
-	      		activeColor="white"
-	          	inactiveColor="silver"
-	          	barStyle={{backgroundColor:Theme.colors.primary}} 
-	          	shifting={false}
-	        >	
-	        	{/*tab anggota dengan stack list, insert & update*/}
-	        	<BottomTab.Screen 
-					name="AnggotaListScreen"
-					options={{
-						tabBarLabel: 'Anggota',
-						tabBarIcon: ({color}) => (<MaterialCommunityIcons name="account" color={color} size={25} />)
-					}}
-				>
-				{() => (
-              		<Stack.Navigator>
-		                <Stack.Screen 
-		                  name="AnggotaListScreen"
-		                  component={AnggotaListScreen}
-		                  options={{headerShown:false}}
-		                />
-		                <Stack.Screen 
-		                  name="AnggotaInsertScreen"
-		                  component={AnggotaInsertScreen}
-		                  options={{headerShown:false}} 
-		                />
-		                <Stack.Screen 
-		                  name="AnggotaUpdateScreen"
-		                  component={AnggotaUpdateScreen}
-		                  options={{headerShown:false}}
-		                />
-					</Stack.Navigator>
-				)}
-        </BottomTab.Screen>
+    <PaperProvider theme={Theme}>
+      <NavigationContainer>
+          <BottomTab.Navigator
+            activeColor="white"
+              inactiveColor="silver"
+              barStyle={{backgroundColor:Theme.colors.primary}} 
+              shifting={false}
+          > 
+            {/*tab anggota dengan stack list, insert & update*/}
+            <BottomTab.Screen 
+              name="AnggotaTab"
+              options={{
+                tabBarLabel: 'Anggota',
+                tabBarIcon: ({color}) => (<MaterialCommunityIcons name="account" color={color} size={25} />)
+              }}
+            >
+            {() => (
+                  <Stack.Navigator>
+                    <Stack.Screen 
+                      name="AnggotaListScreen"
+                      component={AnggotaListScreen}
+                      options={{headerShown:false}}
+                    />
+                    <Stack.Screen 
+                      name="AnggotaInsertScreen"
+                      component={AnggotaInsertScreen}
+                      options={{headerShown:false}} 
+                    />
+                    <Stack.Screen 
+                      name="AnggotaUpdateScreen"
+                      component={AnggotaUpdateScreen}
+                      options={{headerShown:false}}
+                    />
+                  </Stack.Navigator>
+            )}
+            </BottomTab.Screen>
 
-      	{/*tab buku dengan stack list, insert & update*/}
-				<BottomTab.Screen 
-					name="BukuListScreen"
-					options={{
-						tabBarLabel: 'Buku',
-						tabBarIcon: ({color}) => (<MaterialCommunityIcons name="book" color={color} size={25} />)
-					}}
-				>
-				{() => (
-              		<Stack.Navigator>
-		                <Stack.Screen 
-		                  name="BukuListScreen"
-		                  component={BukuListScreen}
-		                  options={{headerShown:false}}
-		                />
-		                <Stack.Screen 
-		                  name="BukuInsertScreen"
-		                  component={BukuInsertScreen}
-		                  options={{headerShown:false}} 
-		                />
-		                <Stack.Screen 
-		                  name="BukuUpdateScreen"
-		                  component={BukuUpdateScreen}
-		                  options={{headerShown:false}}
-		                />
-					</Stack.Navigator>
-				)}
-        </BottomTab.Screen>
+            {/*tab buku dengan stack list, insert & update*/}
+            <BottomTab.Screen 
+              name="BukuTab"
+              options={{
+                tabBarLabel: 'Buku',
+                tabBarIcon: ({color}) => (<MaterialCommunityIcons name="book" color={color} size={25} />)
+              }}
+            >
+            {() => (
+                      <Stack.Navigator>
+                        <Stack.Screen 
+                          name="BukuListScreen"
+                          component={BukuListScreen}
+                          options={{headerShown:false}}
+                        />
+                        <Stack.Screen 
+                          name="BukuInsertScreen"
+                          component={BukuInsertScreen}
+                          options={{headerShown:false}} 
+                        />
+                        <Stack.Screen 
+                          name="BukuUpdateScreen"
+                          component={BukuUpdateScreen}
+                          options={{headerShown:false}}
+                        />
+                      </Stack.Navigator>
+            )}
+            </BottomTab.Screen>
 
-        {/*tab peminjaman dengan stack list, listbuku & listbuku insert*/}
-				<BottomTab.Screen 
-					name="PeminjamanListScreen"
-					options={{
-						tabBarLabel: 'Peminjaman',
-						tabBarIcon: ({color}) => (<MaterialCommunityIcons name="clipboard-list" color={color} size={25} />)
-					}}
-				>
-				{() => (
-              		<Stack.Navigator>
-		                <Stack.Screen 
-		                  name="PeminjamanListScreen"
-		                  component={PeminjamanListScreen}
-		                  options={{headerShown:false}}
-		                />
-		                <Stack.Screen 
-		                  name="PeminjamanBukuListScreen"
-		                  component={PeminjamanBukuListScreen}
-		                  options={{headerShown:false}} 
-		                />
-		                <Stack.Screen 
-		                  name="PeminjamanBukuInsertScreen"
-		                  component={PeminjamanBukuInsertScreen}
-		                  options={{headerShown:false}}
-		                />
-					</Stack.Navigator>
-				)}
-      	</BottomTab.Screen>
+            {/*tab peminjaman dengan stack list, listbuku & listbuku insert*/}
+            <BottomTab.Screen 
+              name="PeminjamanTab"
+              options={{
+                tabBarLabel: 'Peminjaman',
+                tabBarIcon: ({color}) => (<MaterialCommunityIcons name="clipboard-list" color={color} size={25} />)
+              }}
+            >
+            {() => (
+                      <Stack.Navigator>
+                        <Stack.Screen 
+                          name="PeminjamanListScreen"
+                          component={PeminjamanListScreen}
+                          options={{headerShown:false}}
+                        />
+                        <Stack.Screen 
+                          name="PeminjamanBukuListScreen"
+                          component={PeminjamanBukuListScreen}
+                          options={{headerShown:false}} 
+                        />
+                        <Stack.Screen 
+                          name="PeminjamanBukuInsertScreen"
+                          component={PeminjamanBukuInsertScreen}
+                          options={{headerShown:false}}
+                        />
+              </Stack.Navigator>
+            )}
+            </BottomTab.Screen>
 
-	    	</BottomTab.Navigator>
-	    </NavigationContainer>
+        </BottomTab.Navigator>
+      </NavigationContainer>
     </PaperProvider>
   );
 }

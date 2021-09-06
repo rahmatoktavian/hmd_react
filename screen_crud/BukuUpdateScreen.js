@@ -4,7 +4,6 @@ import { Provider as PaperProvider, Appbar, Button, TextInput, HelperText, Porta
 import { Picker } from '@react-native-picker/picker';
 
 import supabase from '../config/supabase';
-import BaseUrl from '../config/BaseUrl';
 import Theme from '../config/Theme';
 
 class BukuInsertScreen extends Component {
