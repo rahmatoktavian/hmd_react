@@ -9,7 +9,3 @@ const supabase = createClient(supabase_url, supabase_key, {
 });
 
 export default supabase;
-
-
-/*const supabase_url = "https://kpmpgopdpotxrurikwlw.supabase.co";
-const supabase_key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYyMDYyNDAyMSwiZXhwIjoxOTM2MjAwMDIxfQ.45dRMiW3hPcPG5We62K5Q48qc-GBMukPaThOWkOj7hs';*/
